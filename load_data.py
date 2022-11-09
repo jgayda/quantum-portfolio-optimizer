@@ -8,9 +8,9 @@ class DataLoader:
         self.budget = budget
 
         if budgetThreshold is None:
-            self.budgetThreshold = budgetThreshold
+            self.budgetThreshold = 0.96 
         else:
-            self.budgetThreshold = 0.96
+            self.budgetThreshold = budgetThreshold
 
         self.dataframe = pd.read_csv(filepath, index_col=0)
         stocks = []
