@@ -2,24 +2,29 @@ import csv
 import pandas as pd
 
 class DataLoader:
-    def __init__(self, filepath, budget):
+    def __init__(self, filepath, budget, budgetThreshold=None):
         print("Loading data from file: ", filepath)
         self.filepath = filepath
         self.budget = budget
 
-        self.dataframe = pd.read_csv(filepath, index_col=0)
-        stockTickers = []
-        for col in self.dataframe:
-            stockTickers.append(col)
-        self.stockTickers = stockTickers
+        if budgetThreshold is None:
+            self.budgetThreshold = budgetThreshold
+        else:
+            self.budgetThreshold = 0.96
 
-        self.initialHoldings = {s : 0 for s in self.stockTickers}
+        self.dataframe = pd.read_csv(filepath, index_col=0)
+        stocks = []
+        for col in self.dataframe:
+            stocks.append(col)
+        self.stocks = stocks
+
+        self.initialHoldings = {s : 0 for s in self.stocks}
 
         self.maxShares = (self.budget / self.dataframe.iloc[1]).astype(int)
 
         self.price = self.dataframe.iloc[0]
 
-        self.monthlyReturns = self.dataframe[list(self.stockTickers)].pct_change().iloc[1:]
+        self.monthlyReturns = self.dataframe[list(self.stocks)].pct_change().iloc[1:]
 
         self.averageMonthlyReturns = self.monthlyReturns.mean(axis=0)
 

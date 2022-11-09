@@ -9,8 +9,8 @@ from single_period_cqm import SinglePeriod
 def main():
     print("\nHello world.")
     modelData = DataLoader('data/sample-data.csv', 10000)
-
-    model = SinglePeriod()
+    model = SinglePeriod(modelData)
+    model.run()
     
 
 if __name__ == '__main__':
