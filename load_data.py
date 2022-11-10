@@ -1,4 +1,3 @@
-import csv
 import pandas as pd
 
 class DataLoader:
@@ -18,7 +17,7 @@ class DataLoader:
             stocks.append(col)
         self.stocks = stocks
 
-        self.initialHoldings = {s : 0 for s in self.stocks}
+        self.initialHoldings = {stock : 0 for stock in self.stocks}
 
         self.maxShares = (self.budget / self.dataframe.iloc[1]).astype(int)
 

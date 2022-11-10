@@ -6,7 +6,7 @@ from dwave.system import LeapHybridCQMSampler
 
 from itertools import product
 
-class SinglePeriod:
+class SinglePeriodCQM:
     def __init__(self, data, token):
         self.data = data
         self.sampleSet = {}
@@ -30,8 +30,8 @@ class SinglePeriod:
             returns = returns + data.price[stock] * data.averageMonthlyReturns[stock] * x[stock]
 
         cqm.add_constraint(quicksum([x[stock] * data.price[stock] for stock in data.stocks]) <= data.budget, label = 'upper_budget')
-        cqm.add_constraint(quicksum([x[stock] * data.price[stock] for stock in data.stocks]) <= data.budgetThreshold * data.budget, label = 'lower_budget')
-        cqm.add_constraint(risk <= 1, label='max_risk')
+        cqm.add_constraint(quicksum([x[stock] * data.price[stock] for stock in data.stocks]) >= data.budgetThreshold * data.budget, label = 'lower_budget')
+        cqm.add_constraint(risk <= 0.0, label='max_risk')
 
         cqm.set_objective(-1 * returns)
 
