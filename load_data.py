@@ -1,8 +1,9 @@
 import pandas as pd
 
 class DataLoader:
-    def __init__(self, filepath, budget, budgetThreshold=None):
-        print("Loading data from file: ", filepath)
+    def __init__(self, filepath, budget, budgetThreshold, verbose):
+        print("Loading stock data from file: ", filepath)
+        self.settings = {"isVerbose" : verbose}
         self.filepath = filepath
         self.budget = budget
 
@@ -28,3 +29,8 @@ class DataLoader:
         self.averageMonthlyReturns = self.monthlyReturns.mean(axis=0)
 
         self.covarianceMatrix = self.monthlyReturns.cov()
+
+        if self.settings["isVerbose"]:
+            print(f"\nData loaded:")
+            print(f"Running model with {len(stocks)} available stocks: ",stocks)
+            print(f"Max number of holdings: ", self.maxShares)

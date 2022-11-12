@@ -17,7 +17,8 @@ class SinglePeriodCQM:
     def build_cqm(self):
         cqm = ConstrainedQuadraticModel()
         data = self.data
-        # Add each individual stock as a variable to the model
+
+        # Add each individual stock as a variable representing the number of shares purchased to the model
         x = {stock: Integer("%s" %stock, lower_bound = 0, upper_bound = data.maxShares[stock]) for stock in data.stocks}
 
         risk = 0
@@ -25,15 +26,22 @@ class SinglePeriodCQM:
             riskCoefficient = data.covarianceMatrix[stock1][stock2] * data.price[stock1] * data.price[stock2]
             risk = risk + riskCoefficient * x[stock1] * x[stock2]
         
+        #print("\nRisk:",risk)
+        
         returns = 0
         for stock in data.stocks:
             returns = returns + data.price[stock] * data.averageMonthlyReturns[stock] * x[stock]
+
+        #print("\nReturn:",returns)
 
         cqm.add_constraint(quicksum([x[stock] * data.price[stock] for stock in data.stocks]) <= data.budget, label = 'upper_budget')
         cqm.add_constraint(quicksum([x[stock] * data.price[stock] for stock in data.stocks]) >= data.budgetThreshold * data.budget, label = 'lower_budget')
         cqm.add_constraint(risk <= 0.0, label='max_risk')
 
-        cqm.set_objective(-1 * returns)
+        #cqm.set_objective(-1 * returns)
+        alpha = 0.005
+        cqm.set_objective(alpha * risk - returns)
+        print("Min mean-var:", alpha * risk - returns)
 
         cqm.substitute_self_loops()
 
